@@ -46,8 +46,15 @@ jobs:
       - name: Upload App Bundle
         uses: actions/upload-artifact@v2
         with:
-          name: realease-appbundle      
-      - name: Authenticate Github
-        env:
-          TOKEN: ${{secrets.TOKEN}}
-        run: echo $TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin    
+          name: realease-appbundle 
+          path: build/app/outputs/bundle/release/app.aab
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: |
+            build/app/outputs/apk/release/*,
+            build/ios/iphoneos/app.ipa
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}
+             
