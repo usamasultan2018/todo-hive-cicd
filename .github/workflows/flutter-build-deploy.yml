@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main    
- 
+
 jobs:
   build:
     name: Build and Test
@@ -15,46 +15,45 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
-        
+        uses: actions/checkout@v4
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.3'
-          
+
       - name: Install Dependencies   
         run: flutter pub get
 
       - name: Analyze Code
         run: flutter analyze
-        
+
       - name: Run Tests
         run: flutter test
-        
+
       - name: Build APK
         run: flutter build apk --release
-        
+
       - name: Build App Bundle
         run: flutter build appbundle --release
-        
+
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: realease-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v2
         with:
-          name: realease-appbundle 
+          name: release-appbundle
           path: build/app/outputs/bundle/release/app.aab
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
-            build/app/outputs/apk/release/*,
-            build/ios/iphoneos/app.ipa
+            build/app/outputs/apk/release/app-release.apk
+            build/app/outputs/bundle/release/app.aab
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
-             
